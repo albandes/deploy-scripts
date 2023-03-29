@@ -7,7 +7,7 @@ Scripts de deploy com git
 
 /home/workdir/scripts/deploy-github -d /var/www/html/homologa/ -r /home/workdir/repos/homologa-hdk-v1/ -e /home/workdir/scripts/exclude-homologa-hdk-v1.txt -c /dev/null
 
-
+```bash
 /var/log/deploy.log {
     missingok
     notifempty
@@ -16,7 +16,7 @@ Scripts de deploy com git
     daily
     create 0600 apache apache
 }
-
+```
 
 
 .netrc
