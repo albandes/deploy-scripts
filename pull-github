@@ -1,1 +1,118 @@
+#! /bin/bash
+
+################################################################################
+# usage                                                                        #
+################################################################################
+usage()
+{
+   # Display Help
+   echo
+   echo "Syntax: ${0##*/} [-r|-d|-h]"
+   echo "options:"
+   echo "-r     Repository to pull."
+   echo "-b		Branch."
+   echo "-d     Directory to update."
+   echo "-h     Print this Help."
+   echo
+}
+
+git_pull()
+{
+	echo "Directory: $DIRECTORY "
+	echo "Repository: $REPOSITORY"
+	echo "Branch: $BRANCH"
+	
+	echo -e "\n`/bin/date '+%Y/%m/%d %H:%M:%S'`: *** starting git pull of $REPOSITORY, branch $BRANCH in $DIRECTORY ***\n" | tee >> /var/log/deploy.log 2>&1
+	cd $DIRECTORY && sudo -u apache git reset --hard HEAD >> /var/log/deploy.log
+	cd $DIRECTORY && sudo -u apache git pull origin $BRANCH >> /var/log/deploy.log
+}
+
+################################################################################
+# Process the input options.                                                   #
+################################################################################
+
+if [[ $# -eq 0 ]] ; then
+    echo 'No arguments supplied'
+    usage
+    exit 0
+fi
+
+if [[ ! $@ =~ ^\-.+ ]]
+then
+  usage
+  exit 1
+fi
+
+echo $#
+
+if [[ $# != 6 ]] ; then
+	echo ''
+    echo 'Invalid number of arguments'
+    usage
+    exit 0
+fi
+
+# Get the options
+while getopts "hd:r:b:" arg; do
+   case $arg in
+		h) # display Help
+			usage
+			exit
+        ;;
+		
+		d) # directory
+			if [[ -z "$2" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			DIRECTORY=$2
+ 
+			if [ ! -d "$DIRECTORY" ]; then
+				echo ''
+                echo "$DIRECTORY doesn't exist"
+                exit 0
+			fi
+		 
+        ;; 
+		
+		r) # repository
+			if [[ -z "$3" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			REPOSITORY=$4
+         
+        ;;
+		
+		b) # branch
+			if [[ -z "$5" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			BRANCH=$6
+         
+        ;;
+		
+		\?) # incorrect option
+			echo "Error: Invalid option"
+			exit
+        ;;
+   esac
+   
+done
+
+. /root/.pipegrep/credentials
+
+git_pull
+
+
 
