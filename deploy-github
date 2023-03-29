@@ -1,1 +1,138 @@
+#! /bin/bash
+
+################################################################################
+# usage                                                                        #
+################################################################################
+usage()
+{
+   # Display Help
+   echo
+   echo "Syntax: ${0##*/} [-r|-d|-h]"
+   echo "options:"
+   
+   echo "-d     Directory to update."
+   echo "-r     Local repository directory."
+   echo "-e		Exclude file"
+   echo "-c     composer.json directory"
+   
+   echo "-h     Print this Help."
+   echo
+}
+
+git_deploy()
+{
+	echo "Directory: $DIRECTORY "
+	echo "Local Repository: $REPOSITORY"
+	echo "Exclude file: $EXCLUDE"
+	echo "Composre directory: $COMPOSER"
+	
+	echo -e "\n`/bin/date '+%Y/%m/%d %H:%M:%S'`: *** starting sync $DIRECTORY from $REPOSITORY ***\n" | tee >> /var/log/deploy.log 2>&1
+	sudo /usr/bin/rsync -avh --log-file=/var/log/deploy.log  --exclude-from=$EXCLUDE $REPOSITORY $DIRECTORY/
+#	cd $COMPOSER && sudo -u apache /bin/composer update >> /var/log/deploy.log
+	echo -e "\n`/bin/date '+%Y/%m/%d %H:%M:%S'`: *** finished sync $DIRECTORY from $REPOSITORY ***\n" | tee >> /var/log/deploy.log 2>&1
+}
+
+################################################################################
+# Process the input options.                                                   #
+################################################################################
+
+if [[ $# -eq 0 ]] ; then
+    echo 'No arguments supplied'
+    usage
+    exit 0
+fi
+
+if [[ ! $@ =~ ^\-.+ ]]
+then
+  usage
+  exit 1
+fi
+
+if [[ $# != 8 ]] ; then
+	echo ''
+    echo 'Invalid number of arguments'
+    usage
+    exit 0
+fi
+
+# Get the options
+while getopts "hd:r:e:c::" arg; do
+   case $arg in
+		h) # display Help
+			usage
+			exit
+        ;;
+		
+		d) # directory
+			if [[ -z "$2" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			DIRECTORY=$2
+ 
+			if [ ! -d "$DIRECTORY" ]; then
+				echo ''
+                echo "$DIRECTORY doesn't exist"
+                exit 0
+			fi
+		 
+        ;; 
+		
+		r) # repository
+			if [[ -z "$3" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			REPOSITORY=$4
+			
+			if [ ! -d "$REPOSITORY" ]; then
+				echo ''
+                echo "$REPOSITORY doesn't exist"
+                exit 0
+			fi
+         
+        ;;
+
+		e) # exclude file
+			if [[ -z "$5" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			EXCLUDE=$6
+         
+        ;;		
+
+		c) # composer directory
+			if [[ -z "$7" ]] ; then
+				echo ''
+				echo 'No arguments supplied'
+				usage
+				exit 0
+			fi
+
+			COMPOSER=$8
+         
+        ;;		
+		
+		\?) # incorrect option
+			echo "Error: Invalid option"
+			exit
+        ;;
+   esac
+   
+done
+
+
+git_deploy
+
+
 
