@@ -2,6 +2,12 @@
 Scripts de deploy com git
 
 
+
+
+mkdir /home/workdir/repos
+
+chown -R apache.apache repos
+
 git clone -b <branch> <remote_repo>
 
 git clone  https://<user>:<token>@github.com/<user>/<remote_repo> .
