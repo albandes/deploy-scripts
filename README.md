@@ -2,6 +2,9 @@
 Scripts de deploy com git
 
 
+git clone -b <branch> <remote_repo>
+
+
 /home/workdir/scripts/pull-github -d /home/workdir/repos/homologa-hdk-v1 -r  albandes/ituran -b develop
 
 
