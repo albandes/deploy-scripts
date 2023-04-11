@@ -28,7 +28,7 @@ git_deploy()
 	
 	echo -e "\n`/bin/date '+%Y/%m/%d %H:%M:%S'`: *** starting sync $DIRECTORY from $REPOSITORY ***\n" | tee >> /var/log/deploy.log 2>&1
 	sudo /usr/bin/rsync -avh --log-file=/var/log/deploy.log  --exclude-from=$EXCLUDE $REPOSITORY $DIRECTORY/
-#	cd $COMPOSER && sudo -u apache /bin/composer update >> /var/log/deploy.log
+	cd $COMPOSER && sudo -u apache /bin/composer update >> /var/log/deploy.log
 	echo -e "\n`/bin/date '+%Y/%m/%d %H:%M:%S'`: *** finished sync $DIRECTORY from $REPOSITORY ***\n" | tee >> /var/log/deploy.log 2>&1
 }
 
