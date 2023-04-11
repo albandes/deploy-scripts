@@ -4,6 +4,8 @@ Scripts de deploy com git
 
 git clone -b <branch> <remote_repo>
 
+git clone  https://<user>:<token>@github.com/<user>/<remote_repo> .
+
 sudo -u apache composer install
     
     
