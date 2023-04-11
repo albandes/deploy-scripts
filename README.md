@@ -25,6 +25,17 @@ sudo -u apache composer install
 }
 ```
 
+To create .netrc file do next
 
-.netrc
-machine github.com login seu-login-no-github password sua-senha-no-github
+Fire up Terminal
+cd ~ (go to the home directory)
+touch .netrc (create file)
+open .netrc (open .netrc)
+Set required data.
+Save
+.netrc file should be like this
+
+machine api.mapbox.com
+login mapbox
+password <secret_key_created_from_your_mapbox_account>
+    
